@@ -16,11 +16,12 @@ var supportedCities = map[string]string{
 	"split": "SPLIT_MARJAN",
 }
 
-var enable_cache = true                     // Whether to enable in-memory caching
-var cache_purge_interval = 10 * time.Minute // How often to purge expired cache items
-var cache_item_expiry = 5 * time.Minute     // How long to before cache items expires
+var enable_cache = true                    // Whether to enable in-memory caching
+var cache_purge_interval = 5 * time.Minute // How often to purge expired cache items
+var cache_item_expiry = 1 * time.Minute    // How long to before cache items expires
 
 func main() {
+	//gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 
 	if enable_cache {
@@ -34,7 +35,7 @@ func main() {
 		router.GET("/weather/:city", getCityWeather)
 	}
 
-	router.Run("localhost:8080")
+	router.Run()
 }
 
 func getWeather(c *gin.Context) {
