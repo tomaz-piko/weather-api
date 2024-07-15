@@ -3,7 +3,10 @@ package main
 import (
 	"log"
 	"strings"
+	"time"
 
+	cache "github.com/chenyahui/gin-cache"
+	"github.com/chenyahui/gin-cache/persist"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,12 +16,23 @@ var supportedCities = map[string]string{
 	"split": "SPLIT_MARJAN",
 }
 
+var enable_cache = true                     // Whether to enable in-memory caching
+var cache_purge_interval = 10 * time.Minute // How often to purge expired cache items
+var cache_item_expiry = 5 * time.Minute     // How long to before cache items expires
+
 func main() {
 	router := gin.Default()
 
-	// Routes
-	router.GET("/weather", getWeather)
-	router.GET("/weather/:city", getCityWeather)
+	if enable_cache {
+		memoryStore := persist.NewMemoryStore(cache_purge_interval)
+		// Routes
+		router.GET("/weather", cache.CacheByRequestURI(memoryStore, cache_item_expiry), getWeather)
+		router.GET("/weather/:city", cache.CacheByRequestURI(memoryStore, cache_item_expiry), getCityWeather)
+	} else {
+		// Routes
+		router.GET("/weather", getWeather)
+		router.GET("/weather/:city", getCityWeather)
+	}
 
 	router.Run("localhost:8080")
 }
