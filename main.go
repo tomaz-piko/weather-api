@@ -21,7 +21,7 @@ var cache_purge_interval = 5 * time.Minute // How often to purge expired cache i
 var cache_item_expiry = 1 * time.Minute    // How long to before cache items expires
 
 func main() {
-	//gin.SetMode(gin.ReleaseMode)
+	//gin.SetMode(gin.ReleaseMode) // Uncomment this to enable ReleaseMode
 	router := gin.Default()
 
 	if enable_cache {
@@ -38,6 +38,9 @@ func main() {
 	router.Run()
 }
 
+// Fetches the payload for all supported citites,
+// transforms it into an array of City structs
+// and returns it as a JSON response.
 func getWeather(c *gin.Context) {
 	var data []City
 	for _, v := range supportedCities {
@@ -61,6 +64,9 @@ func getWeather(c *gin.Context) {
 	})
 }
 
+// Fetches the payload for a specific city,
+// transforms it into a City struct
+// and returns it as a JSON response.
 func getCityWeather(c *gin.Context) {
 	city := strings.ToLower(c.Param("city"))
 	val, ok := supportedCities[city]

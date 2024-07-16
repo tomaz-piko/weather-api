@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+// fetchCityPayload fetches the XML payload from the ARSO API
+// and returns the payload, status code and an error if any occured.
 func fetchCityPayload(city string) (*XMLPayload, int, error) {
 	url := fmt.Sprintf("https://meteo.arso.gov.si/uploads/probase/www/fproduct/text/sl/forecast_%s_latest.xml", city)
 	response, err := http.Get(url)
@@ -28,6 +30,7 @@ func fetchCityPayload(city string) (*XMLPayload, int, error) {
 	return payload, 200, nil
 }
 
+// payloadToData converts the XML payload to a City struct
 func payloadToData(p *XMLPayload) City {
 	var W_s []Weather
 	for _, m := range p.MetData {

@@ -1,5 +1,6 @@
 package main
 
+// Use of a generic type to support []City | City | nil
 type Response[T any] struct {
 	Status int  `json:"status"`
 	Error  bool `json:"error"`
@@ -21,8 +22,8 @@ type Weather struct {
 }
 
 type WeatherTemp struct {
-	Low  int64  `json:"low"`
-	Max  int64  `json:"max"`
+	Low  int16  `json:"low"`
+	Max  int16  `json:"max"`
 	Unit string `json:"unit"`
 }
 
@@ -30,6 +31,6 @@ type WeatherWind struct {
 	Icon          string  `json:"icon"`
 	Direction     string  `json:"direction"`
 	DirectionLong string  `json:"directionLong"`
-	Speed         float64 `json:"speed"`
+	Speed         float32 `json:"speed"`
 	Unit          string  `json:"unit"`
 }
