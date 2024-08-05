@@ -16,24 +16,23 @@ var supportedCities = map[string]string{
 	"split": "SPLIT_MARJAN",
 }
 
-var enable_cache = true                    // Whether to enable in-memory caching
 var cache_purge_interval = 5 * time.Minute // How often to purge expired cache items
 var cache_item_expiry = 1 * time.Minute    // How long to before cache items expires
 
 func main() {
-	//gin.SetMode(gin.ReleaseMode) // Uncomment this to enable ReleaseMode
-	router := gin.Default()
+	gin.SetMode(gin.ReleaseMode) // Uncomment this to enable ReleaseMode
+	//router := gin.Default()
+	router := gin.New()
+	// Disable logging for /weather endpoint
+	router.Use(
+		gin.LoggerWithWriter(gin.DefaultWriter, "/weather"),
+		gin.Recovery(),
+	)
 
-	if enable_cache {
-		memoryStore := persist.NewMemoryStore(cache_purge_interval)
-		// Routes
-		router.GET("/weather", cache.CacheByRequestURI(memoryStore, cache_item_expiry), getWeather)
-		router.GET("/weather/:city", cache.CacheByRequestURI(memoryStore, cache_item_expiry), getCityWeather)
-	} else {
-		// Routes
-		router.GET("/weather", getWeather)
-		router.GET("/weather/:city", getCityWeather)
-	}
+	memoryStore := persist.NewMemoryStore(cache_purge_interval)
+	// Routes
+	router.GET("/weather", cache.CacheByRequestURI(memoryStore, cache_item_expiry), getWeather)
+	router.GET("/weather/:city", cache.CacheByRequestURI(memoryStore, cache_item_expiry), getCityWeather)
 
 	router.Run()
 }
